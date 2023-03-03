@@ -6,11 +6,11 @@ plugins {
 }
 
 android {
-    namespace 'com.example.gifsearcher'
+    namespace 'ru.internship.gifsearcher'
     compileSdk 33
 
     defaultConfig {
-        applicationId "com.example.gifsearcher"
+        applicationId "ru.internship.gifsearcher"
         minSdk 24
         targetSdk 33
         versionCode 1

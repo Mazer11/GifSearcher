@@ -10,7 +10,7 @@ interface GifApi {
     @GET("v1/gifs/trending")
     fun getSomeNewGiffs(
         @Query("api_key") api_key: String,
-        @Query("limit") limit: Int = 25
+        @Query("limit") limit: Int = 48
     ): Call<GiffsData>
 
     @GET("v1/gifs/search")

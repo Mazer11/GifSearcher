@@ -8,7 +8,7 @@ class GifRepository(
     private val api: GifApi
 ) {
 
-    fun getSomeNewGiffs(limit: Int = 25): Call<GiffsData> {
+    fun getSomeNewGiffs(limit: Int = 48): Call<GiffsData> {
         return api.getSomeNewGiffs(
             api_key = Constants.api_key,
             limit = limit

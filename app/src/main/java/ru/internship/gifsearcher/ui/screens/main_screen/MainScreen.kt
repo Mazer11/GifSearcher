@@ -1,29 +1,42 @@
 package ru.internship.gifsearcher.ui.screens.main_screen
 
 import android.os.Build
-import android.util.Log
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.ImageLoader
+import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
 import coil.decode.GifDecoder
 import coil.decode.ImageDecoderDecoder
 import coil.request.ImageRequest
+import coil.size.Size
 import ru.internship.gifsearcher.ui.common.LoadingScreen
+import ru.internship.gifsearcher.ui.navigation.NavRoutes
+import ru.internship.gifsearcher.ui.screens.main_screen.components.SearchAppBar
 import ru.internship.gifsearcher.vm.MainViewModel
+import androidx.compose.foundation.layout.R as R
 
-@OptIn(ExperimentalMaterial3Api::class)
+
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun MainScreen(
     vm: MainViewModel,
@@ -32,50 +45,59 @@ fun MainScreen(
 
     val isLoading = vm.isLoadingState.observeAsState(true)
     val context = LocalContext.current
+    val gifSize = ((LocalConfiguration.current.screenWidthDp - 32) / 3).toInt().dp
+    val searchText = remember { mutableStateOf("") }
+    val imageLoader = ImageLoader.Builder(context)
+        .components {
+            if (Build.VERSION.SDK_INT >= 28) {
+                add(ImageDecoderDecoder.Factory())
+            } else {
+                add(GifDecoder.Factory())
+            }
+        }.build()
 
-
-    Scaffold { paddingValues ->
-        if (isLoading.value) {
-
-            LoadingScreen(paddingValues)
-
-        } else {
-
-            val giffsData = vm.gifdata.observeAsState()
-            val imageLoader = ImageLoader.Builder(context)
-                .components {
-                    if (Build.VERSION.SDK_INT >= 28) {
-                        add(ImageDecoderDecoder.Factory())
-                    } else {
-                        add(GifDecoder.Factory())
-                    }
-                }.build()
-
-            Log.e(
-                "urla", "Size is ${giffsData.value?.data?.size.toString()}\n"
+    Scaffold(
+        topBar = {
+            SearchAppBar(
+                searchText = searchText.value,
+                onSearchTextChanged = { searchText.value = it },
+                onClearClick = { searchText.value = "" },
+                onThemeSwitch = {},
+                onSearch = {}
             )
-
-            Column(
+        }
+    ) { paddingValues ->
+        if (isLoading.value) {
+            LoadingScreen(paddingValues)
+        } else {
+            val giffsData = vm.gifdata.observeAsState()
+            LazyVerticalGrid(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(paddingValues)
+                    .padding(all = 8.dp),
+                horizontalArrangement = Arrangement.SpaceAround,
+                columns = GridCells.Adaptive(gifSize)
             ) {
-                Text(text = giffsData.value?.data?.first()?.image?.original?.url.toString())
-
-                Image(
-                    painter = rememberAsyncImagePainter(
-                        model = ImageRequest.Builder(context)
-                            .data(giffsData.value?.data?.first()?.image?.original?.url.toString())
-                            .crossfade(true).build(),
-                        imageLoader = imageLoader,
-                        contentScale = ContentScale.FillBounds
-                    ),
-                    contentDescription = "",
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(paddingValues)
-                        .background(MaterialTheme.colorScheme.tertiaryContainer)
-                )
+                items(giffsData.value?.data!!) {
+                    Image(
+                        painter = rememberAsyncImagePainter(
+                            model = ImageRequest.Builder(context)
+                                .data(it.image.original.url)
+                                .crossfade(true).build(),
+                            imageLoader = imageLoader,
+                            contentScale = ContentScale.Crop
+                        ),
+                        contentScale = ContentScale.Crop,
+                        contentDescription = "",
+                        modifier = Modifier
+                            .size(gifSize)
+                            .background(MaterialTheme.colorScheme.tertiaryContainer)
+                            .clickable {
+                                navController.navigate(NavRoutes.DETAILS.route)
+                            }
+                    )
+                }
             }
         }
     }
