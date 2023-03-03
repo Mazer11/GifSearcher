@@ -1,5 +1,7 @@
 package ru.internship.gifsearcher
 
 import android.app.Application
+import dagger.hilt.android.HiltAndroidApp
 
-class GifApp: Application() {}
+@HiltAndroidApp
+class GifApp: Application()
