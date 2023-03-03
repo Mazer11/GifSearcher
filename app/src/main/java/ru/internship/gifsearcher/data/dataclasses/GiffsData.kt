@@ -18,7 +18,9 @@ data class GifData(
     /**The username this GIF is attached to, if applicable*/
     @Json(name = "username") val username: String,
     /**The date this GIF was added to the GIPHY database.*/
-    @Json(name = "create_datetime") val create_datetime: String,
+    @Json(name = "import_datetime") val import_datetime: String,
     /**The title that appears on giphy.com for this GIF.*/
-    @Json(name = "title") val title: String
+    @Json(name = "title") val title: String,
+    /**Gif source.*/
+    @Json(name = "source") val source: String
 )

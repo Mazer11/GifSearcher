@@ -12,6 +12,8 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import ru.internship.gifsearcher.GifApp
+import ru.internship.gifsearcher.data.remote.GifApi
+import ru.internship.gifsearcher.data.remote.GifRepository
 import javax.inject.Singleton
 
 @Module
@@ -40,9 +42,20 @@ object AppModule {
     @Provides
     @Singleton
     fun provideRetrofit(okHttpClient: OkHttpClient, moshi: Moshi): Retrofit = Retrofit.Builder()
-        .baseUrl("https://api.giphy.com/v1/gifs/")
+        .baseUrl("https://api.giphy.com/")
         .client(okHttpClient)
         .addConverterFactory(MoshiConverterFactory.create(moshi))
         .build()
+
+    @Provides
+    @Singleton
+    fun provideGifApi(retrofit: Retrofit): GifApi =
+        retrofit.create(GifApi::class.java)
+
+    @Provides
+    @Singleton
+    fun provideRetrofitRepository(api: GifApi): GifRepository {
+        return GifRepository(api)
+    }
 
 }
