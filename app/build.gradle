@@ -62,37 +62,56 @@ dependencies {
     implementation 'androidx.compose.material3:material3'
     implementation 'androidx.compose.ui:ui'
     implementation "androidx.compose.foundation:foundation"
+
     // Android Studio Preview support
     implementation 'androidx.compose.ui:ui-tooling-preview'
     debugImplementation 'androidx.compose.ui:ui-tooling'
+
     //Navigation
     implementation 'androidx.navigation:navigation-compose'
+
     //icons
     implementation 'androidx.compose.material:material-icons-extended'
+
     //Activity
     implementation 'androidx.activity:activity-compose:1.6.1'
+
     //ViewModel
     implementation 'androidx.lifecycle:lifecycle-viewmodel-compose:2.5.1'
+
     //LiveData
     implementation 'androidx.compose.runtime:runtime-livedata'
+
     //Glide
     implementation 'com.github.bumptech.glide:glide:4.15.0'
     kapt 'com.github.bumptech.glide:compiler:4.15.0'
+
     //Data Store
     implementation 'androidx.datastore:datastore-preferences:1.0.0'
+
     //Dagger Hilt
     def dagger_version = '2.44.2'
     implementation "com.google.dagger:hilt-android:$dagger_version"
     implementation "androidx.hilt:hilt-navigation-compose:1.0.0"
     kapt "com.google.dagger:hilt-compiler:$dagger_version"
+
     //Retrofit
     def retrofit_version = '2.9.0'
     implementation "com.squareup.retrofit2:retrofit:$retrofit_version"
     implementation 'com.squareup.retrofit2:converter-scalars:2.1.0'
+
     //Okhttp
     def okhttp_version = '4.10.0'
     implementation "com.squareup.okhttp3:okhttp:$okhttp_version"
     implementation "com.squareup.okhttp3:logging-interceptor:$okhttp_version"
+
+    //Moshi
+    def moshi_version = "1.14.0"
+    implementation "com.squareup.moshi:moshi:$moshi_version"
+    implementation "com.squareup.moshi:moshi-kotlin:$moshi_version"
+    implementation "com.squareup.retrofit2:converter-moshi:$retrofit_version"
+    kapt "com.squareup.moshi:moshi-kotlin-codegen:$moshi_version"
+
     //WorkManager?
     //Room?
 
