@@ -40,7 +40,7 @@ object AppModule {
     @Provides
     @Singleton
     fun provideRetrofit(okHttpClient: OkHttpClient, moshi: Moshi): Retrofit = Retrofit.Builder()
-        .baseUrl("https://giphy.com/")
+        .baseUrl("https://api.giphy.com/v1/gifs/")
         .client(okHttpClient)
         .addConverterFactory(MoshiConverterFactory.create(moshi))
         .build()
