@@ -5,8 +5,6 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 class GifParcelable(
-    /**This GIF's unique ID*/
-    val id: String,
     /**The username this GIF is attached to, if applicable*/
     val username: String,
     /**The date this GIF was added to the GIPHY database.*/

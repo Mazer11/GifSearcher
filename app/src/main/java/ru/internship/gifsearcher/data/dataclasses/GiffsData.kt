@@ -11,8 +11,6 @@ data class GiffsData(
 /**Data of single Gif*/
 @JsonClass(generateAdapter = true)
 data class GifData(
-    /**This GIF's unique ID*/
-    @Json(name = "id") val id: String,
     /**The username this GIF is attached to, if applicable*/
     @Json(name = "username") val username: String,
     /**The date this GIF was added to the GIPHY database.*/
