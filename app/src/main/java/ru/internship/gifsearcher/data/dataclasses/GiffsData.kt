@@ -13,8 +13,6 @@ data class GiffsData(
 data class GifData(
     /**This GIF's unique ID*/
     @Json(name = "id") val id: String,
-    /**The unique URL for this GIF*/
-    @Json(name = "url") val url: String,
     /**The username this GIF is attached to, if applicable*/
     @Json(name = "username") val username: String,
     /**The date this GIF was added to the GIPHY database.*/
@@ -22,5 +20,6 @@ data class GifData(
     /**The title that appears on giphy.com for this GIF.*/
     @Json(name = "title") val title: String,
     /**Gif source.*/
-    @Json(name = "source") val source: String
+    @Json(name = "source") val source: String,
+    @Json(name = "images") val image: Image
 )
