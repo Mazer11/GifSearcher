@@ -9,15 +9,16 @@ data class GetResult(
 )
 
 /**Data of single Gif*/
+@JsonClass(generateAdapter = true)
 data class GifData(
     /**This GIF's unique ID*/
-    val id: String,
+    @Json(name = "id") val id: String,
     /**The unique URL for this GIF*/
-    val url: String,
+    @Json(name = "url") val url: String,
     /**The username this GIF is attached to, if applicable*/
-    val username: String,
+    @Json(name = "username") val username: String,
     /**The date this GIF was added to the GIPHY database.*/
-    val create_datetime: String,
+    @Json(name = "create_datetime") val create_datetime: String,
     /**The title that appears on giphy.com for this GIF.*/
-    val title: String
+    @Json(name = "title") val title: String
 )
