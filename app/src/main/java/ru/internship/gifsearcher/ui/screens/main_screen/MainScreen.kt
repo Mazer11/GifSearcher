@@ -23,17 +23,15 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.ImageLoader
-import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
 import coil.decode.GifDecoder
 import coil.decode.ImageDecoderDecoder
 import coil.request.ImageRequest
-import coil.size.Size
+import ru.internship.gifsearcher.data.dataclasses.GifParcelable
 import ru.internship.gifsearcher.ui.common.LoadingScreen
 import ru.internship.gifsearcher.ui.navigation.NavRoutes
 import ru.internship.gifsearcher.ui.screens.main_screen.components.SearchAppBar
 import ru.internship.gifsearcher.vm.MainViewModel
-import androidx.compose.foundation.layout.R as R
 
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
@@ -45,7 +43,7 @@ fun MainScreen(
 
     val isLoading = vm.isLoadingState.observeAsState(true)
     val context = LocalContext.current
-    val gifSize = ((LocalConfiguration.current.screenWidthDp - 32) / 3).toInt().dp
+    val gifSize = ((LocalConfiguration.current.screenWidthDp - 32) / 3).dp
     val searchText = remember { mutableStateOf("") }
     val imageLoader = ImageLoader.Builder(context)
         .components {
@@ -79,11 +77,11 @@ fun MainScreen(
                 horizontalArrangement = Arrangement.SpaceAround,
                 columns = GridCells.Adaptive(gifSize)
             ) {
-                items(giffsData.value?.data!!) {
+                items(giffsData.value?.data!!) { data ->
                     Image(
                         painter = rememberAsyncImagePainter(
                             model = ImageRequest.Builder(context)
-                                .data(it.image.original.url)
+                                .data(data.image.original.url)
                                 .crossfade(true).build(),
                             imageLoader = imageLoader,
                             contentScale = ContentScale.Crop
@@ -94,6 +92,21 @@ fun MainScreen(
                             .size(gifSize)
                             .background(MaterialTheme.colorScheme.tertiaryContainer)
                             .clickable {
+                                val parcelData = GifParcelable(
+                                    id = data.id,
+                                    username = data.username,
+                                    import_datetime = data.import_datetime,
+                                    title = data.title,
+                                    source = data.source,
+                                    height = data.image.original.height,
+                                    size = data.image.original.size,
+                                    url = data.image.original.url,
+                                    width = data.image.original.width
+                                )
+                                navController.currentBackStackEntry?.savedStateHandle?.set(
+                                    key = "gif",
+                                    value = parcelData
+                                )
                                 navController.navigate(NavRoutes.DETAILS.route)
                             }
                     )

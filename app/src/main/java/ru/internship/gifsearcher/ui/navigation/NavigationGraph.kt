@@ -22,31 +22,31 @@ fun NavigationGraph(
     AnimatedNavHost(
         navController = navController,
         startDestination = startDestination
-    ){
+    ) {
 
         composable(
             route = NavRoutes.MAIN.route,
-            enterTransition ={
+            enterTransition = {
                 fadeIn()
             },
             exitTransition = {
                 fadeOut()
             }
-        ){
+        ) {
             val vm = hiltViewModel<MainViewModel>()
             MainScreen(vm = vm, navController = navController)
         }
 
         composable(
             route = NavRoutes.DETAILS.route,
-            enterTransition ={
+            enterTransition = {
                 fadeIn()
             },
             exitTransition = {
                 fadeOut()
             }
-        ){
-            DetailsScreen()
+        ) {
+            DetailsScreen(navController)
         }
 
     }
