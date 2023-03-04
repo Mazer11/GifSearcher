@@ -22,7 +22,7 @@ import ru.internship.gifsearcher.data.dataclasses.GifData
 @Composable
 fun GifView(
     data: GifData,
-    contentScale: ContentScale,
+    contentScale: ContentScale? = null,
     clickEnabled: Boolean,
     modifier: Modifier,
     onClick: () -> Unit = {}
@@ -44,13 +44,12 @@ fun GifView(
                 .data(data.image.original.url)
                 .crossfade(true).build(),
             imageLoader = imageLoader,
-            contentScale = contentScale
+            contentScale = contentScale ?: ContentScale.Fit
         ),
-        contentScale = contentScale,
+        contentScale = contentScale ?: ContentScale.Fit ,
         contentDescription = "",
         modifier = modifier
             .size(gifSize)
-            .background(MaterialTheme.colorScheme.tertiaryContainer)
             .clickable(enabled = clickEnabled) { onClick() }
     )
 }

@@ -10,6 +10,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import ru.internship.gifsearcher.data.dataclasses.GifData
@@ -42,51 +43,40 @@ fun DetailsScreen(
 
     if (gifData.image.original.size.isNotEmpty())
         Scaffold(modifier = Modifier.fillMaxSize()) { paddingValues ->
-            Box(
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(paddingValues)
-                    .padding(8.dp)
+                    .padding(start = 8.dp, end = 8.dp, top = 8.dp, bottom = 8.dp)
             ) {
-
-                Column(
+                GifView(
+                    data = gifData,
+                    clickEnabled = false,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .align(Alignment.TopCenter)
-                ) {
-                    Text(text = gifData.title)
+                        .height((LocalConfiguration.current.screenHeightDp / 2).dp)
+                        .padding(horizontal = 8.dp, vertical = 26.dp)
+                )
 
-                    GifView(
-                        data = gifData,
-                        contentScale = ContentScale.FillBounds,
-                        clickEnabled = false,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height((LocalConfiguration.current.screenHeightDp / 2).dp)
-                            .padding(all = 8.dp)
-                    )
-                }
+                Text(text = gifData.title)
 
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .align(Alignment.BottomCenter)
-                ) {
-                    Text(
-                        text = "Created by ${gifData.username.ifEmpty { "Unknown" }}\n" +
-                                "${gifData.import_datetime}\n" +
-                                "Original sizes: ${gifData.image.original.width}" +
-                                "x${gifData.image.original.height}\n" +
-                                "Weight: ${
-                                    (gifData.image.original.size.toFloat() / 1024 / 1024)
-                                        .times(100).toInt().toFloat() / 100
-                                }Mb"
-                    )
-                }
-
+                Text(
+                    text = "Created by ${gifData.username.ifEmpty { "Unknown" }}\n" +
+                            "${gifData.import_datetime}\n" +
+                            "Original sizes: ${gifData.image.original.width}" +
+                            "x${gifData.image.original.height}\n" +
+                            "Weight: ${
+                                (gifData.image.original.size.toFloat() / 1024 / 1024)
+                                    .times(100).toInt().toFloat() / 100
+                            }Mb",
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth().padding(top = 16.dp)
+                )
             }
         }
 }
+
 
 
 

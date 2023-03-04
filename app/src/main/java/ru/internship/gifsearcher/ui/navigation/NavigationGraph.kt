@@ -26,12 +26,6 @@ fun NavigationGraph(
 
         composable(
             route = NavRoutes.MAIN.route,
-            enterTransition = {
-                fadeIn()
-            },
-            exitTransition = {
-                fadeOut()
-            }
         ) {
             val vm = hiltViewModel<MainViewModel>()
             MainScreen(vm = vm, navController = navController)
