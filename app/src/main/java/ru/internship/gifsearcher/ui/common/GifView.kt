@@ -2,17 +2,19 @@ package ru.internship.gifsearcher.ui.common
 
 import android.os.Build
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import coil.ImageLoader
+import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
 import coil.decode.GifDecoder
 import coil.decode.ImageDecoderDecoder
@@ -37,20 +39,33 @@ fun GifView(
                 add(GifDecoder.Factory())
             }
         }.build()
+    val painter = rememberAsyncImagePainter(
+        model = ImageRequest.Builder(context)
+            .data(data.image.original.url)
+            .crossfade(true).build(),
+        imageLoader = imageLoader,
+        contentScale = contentScale ?: ContentScale.Fit
+    )
 
     Image(
-        painter = rememberAsyncImagePainter(
-            model = ImageRequest.Builder(context)
-                .data(data.image.original.url)
-//                .placeholder()
-                .crossfade(true).build(),
-            imageLoader = imageLoader,
-            contentScale = contentScale ?: ContentScale.Fit
-        ),
-        contentScale = contentScale ?: ContentScale.Fit ,
+        painter = painter,
+        contentScale = contentScale ?: ContentScale.Fit,
         contentDescription = "",
         modifier = modifier
             .size(gifSize)
-            .clickable(enabled = clickEnabled) { onClick() }
+            .clickable(enabled = clickEnabled) {
+                if (painter.state is AsyncImagePainter.State.Success)
+                    onClick()
+            }
     )
+    if (painter.state is AsyncImagePainter.State.Loading) {
+        Box(modifier = Modifier.size(gifSize)) {
+            CircularProgressIndicator(
+                strokeWidth = 1.dp,
+                modifier = Modifier
+                    .size(gifSize.div(3))
+                    .align(Alignment.Center)
+            )
+        }
+    }
 }
