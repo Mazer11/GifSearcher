@@ -6,10 +6,12 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
@@ -33,6 +35,7 @@ fun MainScreen(
     val isLoading = vm.isLoadingState.observeAsState(true)
     val gifSize = ((LocalConfiguration.current.screenWidthDp - 32) / 3).dp
     val searchText = remember { mutableStateOf("") }
+    val tagText = vm.tagText.observeAsState("Trending")
 
 
     Scaffold(
@@ -42,7 +45,9 @@ fun MainScreen(
                 onSearchTextChanged = { searchText.value = it },
                 onClearClick = { searchText.value = "" },
                 onThemeSwitch = {},
-                onSearch = { vm.onSearch(searchText.value) }
+                onSearch = {
+                    vm.onSearch(searchText.value)
+                }
             )
         }
     ) { paddingValues ->
@@ -50,36 +55,60 @@ fun MainScreen(
             LoadingScreen(paddingValues)
         } else {
             val giffsData = vm.gifdata.observeAsState()
-            LazyVerticalGrid(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues)
-                    .padding(all = 8.dp),
-                horizontalArrangement = Arrangement.SpaceAround,
-                columns = GridCells.Adaptive(gifSize)
-            ) {
-                items(giffsData.value?.data!!) { data ->
-                    GifView(
-                        data = data,
-                        contentScale = ContentScale.Crop,
-                        clickEnabled = true,
+
+            if (giffsData.value?.data.isNullOrEmpty())
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(paddingValues)
+                ) {
+                    Text(
+                        text = "There is nothing to show.",
+                        modifier = Modifier.align(Alignment.Center)
+                    )
+                }
+            else {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(paddingValues)
+                ) {
+
+                    Text(text = "Results for ${tagText.value?.ifEmpty { "Trending" }}")
+
+
+                    LazyVerticalGrid(
                         modifier = Modifier
+                            .fillMaxSize()
+                            .padding(all = 8.dp),
+                        horizontalArrangement = Arrangement.SpaceAround,
+                        columns = GridCells.Adaptive(gifSize)
                     ) {
-                        val parcelData = GifParcelable(
-                            username = data.username,
-                            import_datetime = data.import_datetime,
-                            title = data.title,
-                            source = data.source,
-                            height = data.image.original.height,
-                            size = data.image.original.size,
-                            url = data.image.original.url,
-                            width = data.image.original.width
-                        )
-                        navController.currentBackStackEntry?.savedStateHandle?.set(
-                            key = "gif",
-                            value = parcelData
-                        )
-                        navController.navigate(NavRoutes.DETAILS.route)
+                        items(giffsData.value?.data!!) { data ->
+                            GifView(
+                                data = data,
+                                contentScale = ContentScale.Crop,
+                                clickEnabled = true,
+                                modifier = Modifier
+                            ) {
+                                val parcelData = GifParcelable(
+                                    username = data.username,
+                                    import_datetime = data.import_datetime,
+                                    title = data.title,
+                                    source = data.source,
+                                    height = data.image.original.height,
+                                    size = data.image.original.size,
+                                    url = data.image.original.url,
+                                    width = data.image.original.width
+                                )
+                                navController.currentBackStackEntry?.savedStateHandle?.set(
+                                    key = "gif",
+                                    value = parcelData
+                                )
+                                navController.navigate(NavRoutes.DETAILS.route)
+                            }
+                        }
                     }
                 }
             }

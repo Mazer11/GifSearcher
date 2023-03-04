@@ -31,6 +31,11 @@ class MainViewModel @Inject constructor(
     }
     val isLoadingState: LiveData<Boolean> = _isLoadingState
 
+    private val _tagText: MutableLiveData<String> by lazy {
+        MutableLiveData<String>()
+    }
+    val tagText: LiveData<String> = _tagText
+
     init {
         _isLoadingState.value = true
         viewModelScope.launch {
@@ -43,11 +48,17 @@ class MainViewModel @Inject constructor(
         onLoadSuccess: () -> Unit = {},
         onLoadFailure: () -> Unit = {}
     ) {
+        _tagText.value = value
+
         viewModelScope.launch {
-            searchGifs(
-                value = value,
-                onLoadSuccess = onLoadSuccess,
-                onLoadFailure = onLoadFailure)
+            if (value.isNotEmpty())
+                searchGifs(
+                    value = value,
+                    onLoadSuccess = onLoadSuccess,
+                    onLoadFailure = onLoadFailure
+                )
+            else
+                getNewGiffs()
         }
     }
 
