@@ -14,22 +14,22 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import ru.internship.gifsearcher.GifApp
-import ru.internship.gifsearcher.data.dataclasses.GiffsData
+import ru.internship.gifsearcher.data.dataclasses.GifsData
 import ru.internship.gifsearcher.data.local.DataStoreRepository
-import ru.internship.gifsearcher.data.remote.GifRepository
+import ru.internship.gifsearcher.data.usecases.RemoteUseCases
 import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
-    private val repository: GifRepository,
+    private val remoteUseCases: RemoteUseCases,
     private val application: GifApp,
     private val datastore: DataStoreRepository
 ) : ViewModel() {
 
-    private val _gifData: MutableLiveData<GiffsData> by lazy {
-        MutableLiveData<GiffsData>()
+    private val _gifData: MutableLiveData<GifsData> by lazy {
+        MutableLiveData<GifsData>()
     }
-    val gifdata: LiveData<GiffsData> = _gifData
+    val gifdata: LiveData<GifsData> = _gifData
 
     private val _isLoadingState: MutableLiveData<Boolean> by lazy {
         MutableLiveData<Boolean>()
@@ -161,9 +161,9 @@ class MainViewModel @Inject constructor(
         onLoadSuccess: () -> Unit = {},
         onLoadFailure: () -> Unit = {}
     ) = withContext(Dispatchers.IO) {
-        repository.getSomeNewGiffs(offset = if (currentPage < 25) 0 else currentPage)
-            .enqueue(object : Callback<GiffsData> {
-                override fun onResponse(call: Call<GiffsData>, response: Response<GiffsData>) {
+        remoteUseCases.getTrendingNewGifs.invoke(offset = if (currentPage < 25) 0 else currentPage)
+            .enqueue(object : Callback<GifsData> {
+                override fun onResponse(call: Call<GifsData>, response: Response<GifsData>) {
                     _gifData.value = _gifData.value?.copy(
                         data = buildList {
                             addAll(_gifData.value!!.data)
@@ -174,7 +174,7 @@ class MainViewModel @Inject constructor(
                     onLoadSuccess()
                 }
 
-                override fun onFailure(call: Call<GiffsData>, t: Throwable) {
+                override fun onFailure(call: Call<GifsData>, t: Throwable) {
                     onLoadFailure()
                     Log.e("FAILURE GET", t.message.toString())
                 }
@@ -188,41 +188,22 @@ class MainViewModel @Inject constructor(
         onLoadFailure: () -> Unit = {}
     ) = withContext(Dispatchers.IO) {
         Log.e("SearchNEW", "Search new gifs with offset $currentPage")
-        repository.getGiffsByName(
+        remoteUseCases.getGifsByName.invoke(
             value = value,
             offset = if (currentPage < 25) 0 else currentPage
-        )
-            .enqueue(object : Callback<GiffsData> {
-                override fun onResponse(call: Call<GiffsData>, response: Response<GiffsData>) {
-                    _gifData.value = _gifData.value?.copy(
-                        data = buildList {
-                            addAll(_gifData.value!!.data)
-                            addAll(response.body()!!.data)
-                        }
-                    )
-                    currentPage += 25
-                    onLoadSuccess()
-                }
-
-                override fun onFailure(call: Call<GiffsData>, t: Throwable) {
-                    onLoadFailure()
-                    Log.e("FAILURE GET", t.message.toString())
-                }
-
-            })
-    }
-
-    private suspend fun getTrendingGifs(
-        onLoadSuccess: () -> Unit = {},
-        onLoadFailure: () -> Unit = {}
-    ) = withContext(Dispatchers.IO) {
-        repository.getSomeNewGiffs().enqueue(object : Callback<GiffsData> {
-            override fun onResponse(call: Call<GiffsData>, response: Response<GiffsData>) {
-                _gifData.value = response.body()
+        ).enqueue(object : Callback<GifsData> {
+            override fun onResponse(call: Call<GifsData>, response: Response<GifsData>) {
+                _gifData.value = _gifData.value?.copy(
+                    data = buildList {
+                        addAll(_gifData.value!!.data)
+                        addAll(response.body()!!.data)
+                    }
+                )
+                currentPage += 25
                 onLoadSuccess()
             }
 
-            override fun onFailure(call: Call<GiffsData>, t: Throwable) {
+            override fun onFailure(call: Call<GifsData>, t: Throwable) {
                 onLoadFailure()
                 Log.e("FAILURE GET", t.message.toString())
             }
@@ -230,7 +211,25 @@ class MainViewModel @Inject constructor(
         })
     }
 
-    fun resetCurrentPage(){
+    private suspend fun getTrendingGifs(
+        onLoadSuccess: () -> Unit = {},
+        onLoadFailure: () -> Unit = {}
+    ) = withContext(Dispatchers.IO) {
+        remoteUseCases.getTrendingNewGifs.invoke().enqueue(object : Callback<GifsData> {
+            override fun onResponse(call: Call<GifsData>, response: Response<GifsData>) {
+                _gifData.value = response.body()
+                onLoadSuccess()
+            }
+
+            override fun onFailure(call: Call<GifsData>, t: Throwable) {
+                onLoadFailure()
+                Log.e("FAILURE GET", t.message.toString())
+            }
+
+        })
+    }
+
+    fun resetCurrentPage() {
         currentPage = 0
     }
 
@@ -240,11 +239,11 @@ class MainViewModel @Inject constructor(
         onLoadFailure: () -> Unit = {}
     ) = withContext(Dispatchers.IO) {
         Log.e("SearchFirst", "FIRST search start. currentPage = $currentPage")
-        repository.getGiffsByName(
+        remoteUseCases.getGifsByName.invoke(
             value = value,
             offset = 0
-        ).enqueue(object : Callback<GiffsData> {
-            override fun onResponse(call: Call<GiffsData>, response: Response<GiffsData>) {
+        ).enqueue(object : Callback<GifsData> {
+            override fun onResponse(call: Call<GifsData>, response: Response<GifsData>) {
 
                 _gifData.value = response.body()
                 currentPage += 25
@@ -252,7 +251,7 @@ class MainViewModel @Inject constructor(
                 Log.e("SearchFirst", "FIRST search end. currentPage = $currentPage")
             }
 
-            override fun onFailure(call: Call<GiffsData>, t: Throwable) {
+            override fun onFailure(call: Call<GifsData>, t: Throwable) {
                 Log.e("SearchGifs", "Failed to search gifs throws: ${t.message}")
                 onLoadFailure()
             }

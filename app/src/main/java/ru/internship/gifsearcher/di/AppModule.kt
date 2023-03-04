@@ -15,6 +15,9 @@ import ru.internship.gifsearcher.GifApp
 import ru.internship.gifsearcher.data.local.DataStoreRepository
 import ru.internship.gifsearcher.data.remote.GifApi
 import ru.internship.gifsearcher.data.remote.GifRepository
+import ru.internship.gifsearcher.data.usecases.GetGifsByName
+import ru.internship.gifsearcher.data.usecases.GetTrendingNewGifs
+import ru.internship.gifsearcher.data.usecases.RemoteUseCases
 import javax.inject.Singleton
 
 @Module
@@ -61,8 +64,17 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideDataStore(app: GifApp): DataStoreRepository{
-        return  DataStoreRepository(app)
+    fun provideDataStore(app: GifApp): DataStoreRepository {
+        return DataStoreRepository(app)
+    }
+
+    @Provides
+    @Singleton
+    fun providesRemoteUseCases(repository: GifRepository): RemoteUseCases {
+        return RemoteUseCases(
+            getGifsByName = GetGifsByName(repository),
+            getTrendingNewGifs = GetTrendingNewGifs(repository)
+        )
     }
 
 }
