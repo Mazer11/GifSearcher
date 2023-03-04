@@ -12,13 +12,17 @@ import kotlinx.coroutines.withContext
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import ru.internship.gifsearcher.GifApp
 import ru.internship.gifsearcher.data.dataclasses.GiffsData
+import ru.internship.gifsearcher.data.local.DataStoreRepository
 import ru.internship.gifsearcher.data.remote.GifRepository
 import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
-    private val repository: GifRepository
+    private val repository: GifRepository,
+    private val application: GifApp,
+    private val datastore: DataStoreRepository
 ) : ViewModel() {
 
     private val _gifData: MutableLiveData<GiffsData> by lazy {
@@ -30,6 +34,11 @@ class MainViewModel @Inject constructor(
         MutableLiveData<Boolean>()
     }
     val isLoadingState: LiveData<Boolean> = _isLoadingState
+
+    private val _isDarkTheme: MutableLiveData<Boolean> by lazy {
+        MutableLiveData<Boolean>()
+    }
+    val isDarkTheme: LiveData<Boolean> = _isDarkTheme
 
     private val _tagText: MutableLiveData<String> by lazy {
         MutableLiveData<String>()
@@ -60,6 +69,18 @@ class MainViewModel @Inject constructor(
             else
                 getNewGiffs()
         }
+    }
+
+    fun switchAppTheme() {
+        application.switchAppTheme()
+        _isDarkTheme.value = application.isDarkTheme
+        viewModelScope.launch {
+            datastore.switchThemePreference()
+        }
+    }
+
+    fun getAppTheme(): Boolean{
+        return application.isDarkTheme
     }
 
     private suspend fun getNewGiffs(

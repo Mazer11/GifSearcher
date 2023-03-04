@@ -12,6 +12,7 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import ru.internship.gifsearcher.GifApp
+import ru.internship.gifsearcher.data.local.DataStoreRepository
 import ru.internship.gifsearcher.data.remote.GifApi
 import ru.internship.gifsearcher.data.remote.GifRepository
 import javax.inject.Singleton
@@ -56,6 +57,12 @@ object AppModule {
     @Singleton
     fun provideRetrofitRepository(api: GifApi): GifRepository {
         return GifRepository(api)
+    }
+
+    @Provides
+    @Singleton
+    fun provideDataStore(app: GifApp): DataStoreRepository{
+        return  DataStoreRepository(app)
     }
 
 }

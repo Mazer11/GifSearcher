@@ -3,7 +3,6 @@ package ru.internship.gifsearcher.ui.screens.main_screen.components
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardActions
@@ -21,6 +20,7 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun SearchAppBar(
     searchText: String,
+    isDarkTheme: Boolean,
     onSearchTextChanged: (String) -> Unit,
     onClearClick: () -> Unit,
     onThemeSwitch: () -> Unit,
@@ -63,7 +63,7 @@ fun SearchAppBar(
     }, navigationIcon = {
         IconButton(onClick = { onThemeSwitch() }) {
             Icon(
-                imageVector = if (isSystemInDarkTheme())
+                imageVector = if (isDarkTheme)
                     Icons.Filled.ModeNight
                 else
                     Icons.Filled.LightMode,

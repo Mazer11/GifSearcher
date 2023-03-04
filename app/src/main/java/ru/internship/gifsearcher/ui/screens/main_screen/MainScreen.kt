@@ -36,15 +36,17 @@ fun MainScreen(
     val gifSize = ((LocalConfiguration.current.screenWidthDp - 32) / 3).dp
     val searchText = remember { mutableStateOf("") }
     val tagText = vm.tagText.observeAsState("Trending")
+    val isDarkTheme = vm.isDarkTheme.observeAsState()
 
 
     Scaffold(
         topBar = {
             SearchAppBar(
                 searchText = searchText.value,
+                isDarkTheme = isDarkTheme.value ?: vm.getAppTheme(),
                 onSearchTextChanged = { searchText.value = it },
                 onClearClick = { searchText.value = "" },
-                onThemeSwitch = {},
+                onThemeSwitch = { vm.switchAppTheme() },
                 onSearch = {
                     vm.onSearch(searchText.value)
                 }
@@ -75,7 +77,7 @@ fun MainScreen(
                         .padding(paddingValues)
                 ) {
 
-                    Text(text = "Results for ${tagText.value?.ifEmpty { "Trending" }}")
+                    Text(text = "Results for ${tagText.value.ifEmpty { "Trending" }}")
 
 
                     LazyVerticalGrid(
