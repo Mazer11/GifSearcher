@@ -16,6 +16,7 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 
+/**[TopAppBar] with text field and icon button.*/
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchAppBar(
@@ -51,6 +52,7 @@ fun SearchAppBar(
                 ) {
                     IconButton(onClick = {
                         onClearClick()
+                        onSearch()
                         checkText = ""
                         focusManager.clearFocus()
                     }) {

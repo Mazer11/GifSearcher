@@ -8,18 +8,23 @@ class GifRepository(
     private val api: GifApi
 ) {
 
-    fun getSomeNewGiffs(limit: Int = 48): Call<GiffsData> {
+    fun getSomeNewGiffs(
+        limit: Int = 25,
+        offset: Int = 0
+    ): Call<GiffsData> {
         return api.getSomeNewGiffs(
             api_key = Constants.api_key,
-            limit = limit
+            limit = limit,
+            offset = offset
         )
     }
 
-    fun getGiffsByName(value: String, limit: Int = 25): Call<GiffsData> {
+    fun getGiffsByName(value: String, limit: Int = 25, offset: Int = 0): Call<GiffsData> {
         return api.getGiffsByName(
             api_key = Constants.api_key,
             value = value,
-            limit = limit
+            limit = limit,
+            offset = offset
         )
     }
 
