@@ -42,7 +42,7 @@ fun GifView(
             } else {
                 add(GifDecoder.Factory())
             }
-        }.diskCachePolicy(CachePolicy.DISABLED)
+        }.diskCachePolicy(CachePolicy.DISABLED).memoryCachePolicy(CachePolicy.DISABLED)
         .build()
     val painter = rememberAsyncImagePainter(
         model = ImageRequest.Builder(context)
