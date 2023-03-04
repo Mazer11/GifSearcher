@@ -1,14 +1,10 @@
 package ru.internship.gifsearcher.ui.screens.details_screen
 
-import androidx.activity.OnBackPressedDispatcher
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -59,20 +55,46 @@ fun DetailsScreen(
                         .padding(horizontal = 8.dp, vertical = 26.dp)
                 )
 
-                Text(text = gifData.title)
 
-                Text(
-                    text = "Created by ${gifData.username.ifEmpty { "Unknown" }}\n" +
-                            "${gifData.import_datetime}\n" +
-                            "Original sizes: ${gifData.image.original.width}" +
-                            "x${gifData.image.original.height}\n" +
-                            "Weight: ${
-                                (gifData.image.original.size.toFloat() / 1024 / 1024)
-                                    .times(100).toInt().toFloat() / 100
-                            }Mb",
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier.fillMaxWidth().padding(top = 16.dp)
-                )
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 16.dp, start = 16.dp, end = 16.dp)
+                ) {
+                    Text(
+                        text = gifData.title,
+                        textAlign = TextAlign.Center,
+                        style = MaterialTheme.typography.titleSmall,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 8.dp, start = 8.dp, end = 8.dp)
+                    )
+
+                    Text(
+                        text = "Created by ${gifData.username.ifEmpty { "Unknown" }}\n" +
+                                "${gifData.import_datetime}\n" +
+                                "Original sizes: ${gifData.image.original.width}" +
+                                "x${gifData.image.original.height}\n" +
+                                "Weight: ${
+                                    (gifData.image.original.size.toFloat() / 1024 / 1024)
+                                        .times(100).toInt().toFloat() / 100
+                                }Mb",
+                        textAlign = TextAlign.Center,
+                        style = MaterialTheme.typography.bodyMedium,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 8.dp, start = 8.dp, end = 8.dp)
+                    )
+                }
+
+                Button(
+                    onClick = { navController.navigateUp() },
+                    modifier = Modifier.padding(top = 16.dp)
+                ) {
+                    Text(
+                        text = "Back",
+                    )
+                }
             }
         }
 }

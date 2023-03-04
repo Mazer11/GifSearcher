@@ -5,6 +5,7 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -15,6 +16,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import ru.internship.gifsearcher.data.dataclasses.GifParcelable
@@ -35,7 +37,7 @@ fun MainScreen(
     val isLoading = vm.isLoadingState.observeAsState(true)
     val gifSize = ((LocalConfiguration.current.screenWidthDp - 32) / 3).dp
     val searchText = remember { mutableStateOf("") }
-    val tagText = vm.tagText.observeAsState("Trending")
+    val tagText = vm.tagText.observeAsState("")
     val isDarkTheme = vm.isDarkTheme.observeAsState()
 
 
@@ -66,7 +68,8 @@ fun MainScreen(
                 ) {
                     Text(
                         text = "There is nothing to show.",
-                        modifier = Modifier.align(Alignment.Center)
+                        modifier = Modifier.align(Alignment.Center),
+                        style = MaterialTheme.typography.titleLarge
                     )
                 }
             else {
@@ -76,8 +79,12 @@ fun MainScreen(
                         .fillMaxSize()
                         .padding(paddingValues)
                 ) {
-
-                    Text(text = "Results for ${tagText.value.ifEmpty { "Trending" }}")
+                    Text(
+                        text = if (tagText.value.isEmpty()) "Trending" else "Results for ${tagText.value}",
+                        style = MaterialTheme.typography.titleMedium,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.fillMaxWidth()
+                    )
 
 
                     LazyVerticalGrid(

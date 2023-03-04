@@ -26,14 +26,21 @@ fun SearchAppBar(
     onThemeSwitch: () -> Unit,
     onSearch: () -> Unit
 ) {
-    val showClearButton by remember { derivedStateOf { searchText.isNotEmpty() } }
+    var checkText by remember { mutableStateOf(searchText) }
+    val showClearButton by remember { derivedStateOf { checkText.isNotEmpty() } }
     val focusManager = LocalFocusManager.current
 
     TopAppBar(title = {
-        TextField(
+        OutlinedTextField(
             modifier = Modifier.fillMaxWidth(),
             value = searchText,
-            onValueChange = { onSearchTextChanged(it) },
+            textStyle = MaterialTheme.typography.bodyMedium,
+            onValueChange = {
+                if (it.length < 50) {
+                    onSearchTextChanged(it)
+                    checkText = it
+                }
+            },
             placeholder = { Text(text = "Search gifs...") },
             leadingIcon = {
                 Icon(imageVector = Icons.Default.Search, contentDescription = "")
@@ -44,6 +51,7 @@ fun SearchAppBar(
                 ) {
                     IconButton(onClick = {
                         onClearClick()
+                        checkText = ""
                         focusManager.clearFocus()
                     }) {
                         Icon(
@@ -71,6 +79,6 @@ fun SearchAppBar(
             )
         }
     },
-        modifier = Modifier.padding(top = 4.dp)
+        modifier = Modifier.padding(all = 8.dp)
     )
 }
