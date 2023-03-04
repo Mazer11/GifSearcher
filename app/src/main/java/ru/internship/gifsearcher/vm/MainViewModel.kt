@@ -230,6 +230,10 @@ class MainViewModel @Inject constructor(
         })
     }
 
+    fun resetCurrentPage(){
+        currentPage = 0
+    }
+
     private suspend fun searchGifs(
         value: String,
         onLoadSuccess: () -> Unit = {},

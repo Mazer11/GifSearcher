@@ -59,7 +59,10 @@ fun MainScreen(
                 searchText = searchText.value,
                 isDarkTheme = isDarkTheme.value ?: vm.getAppTheme(),
                 onSearchTextChanged = { searchText.value = it },
-                onClearClick = { searchText.value = "" },
+                onClearClick = {
+                    searchText.value = ""
+                    vm.resetCurrentPage()
+                },
                 onThemeSwitch = { vm.switchAppTheme() },
                 onSearch = {
                     vm.onSearch(searchText.value)
