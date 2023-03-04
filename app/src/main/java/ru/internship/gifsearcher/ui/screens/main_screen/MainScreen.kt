@@ -31,13 +31,25 @@ fun MainScreen(
     vm: MainViewModel,
     navController: NavController
 ) {
-
+    /**Shows loading screen if true.*/
     val isLoading = vm.isLoadingState.observeAsState(true)
+
+    /**Size of one grid cell of LazyVerticalGrid.*/
     val gifSize = ((LocalConfiguration.current.screenWidthDp - 32) / 3).dp
+
+    /**User input in search bar.*/
     val searchText = remember { mutableStateOf("") }
+
+    /**Current user search query value*/
     val tagText = vm.tagText.observeAsState("")
+
+    /**Current app theme mode.*/
     val isDarkTheme = vm.isDarkTheme.observeAsState()
+
+    /**True if unable to send request to server.*/
     val isLoadingFailed = vm.loadingFailed.observeAsState()
+
+    /**True if currently loading new page of gifs*/
     val isPageLoading = vm.isPageLoading.observeAsState()
 
 
@@ -79,6 +91,7 @@ fun MainScreen(
                 }
 
             } else {
+                /**Current list of gifs.*/
                 val giffsData = vm.gifdata.observeAsState()
 
                 if (giffsData.value?.data.isNullOrEmpty())
@@ -127,7 +140,10 @@ fun MainScreen(
                                     },
                                     onLoadSuccess = {
                                         if (index >= vm.currentPage.minus(3)) {
-                                            vm.loadNextGifsPage()
+                                            if (tagText.value.isEmpty())
+                                                vm.loadNextTrendingGifsPage()
+                                            else
+                                                vm.loadNextSearchedGifsPage(value = searchText.value)
                                             vm.switchPageLoadingIndicator()
                                         }
                                     }

@@ -74,7 +74,7 @@ class MainViewModel @Inject constructor(
         _isPageLoading.value = _isPageLoading.value?.not()
     }
 
-    fun loadNextGifsPage() {
+    fun loadNextTrendingGifsPage() {
         if (!isNewCardsRequested)
             viewModelScope.launch {
                 isNewCardsRequested = true
@@ -92,7 +92,10 @@ class MainViewModel @Inject constructor(
         onLoadFailure: () -> Unit = {}
     ) {
         _tagText.value = value
-        currentPage = 25
+        currentPage = 0
+        _isPageLoading.value = false
+        _loadingFailed.value = false
+        isNewCardsRequested = false
 
         viewModelScope.launch {
             if (value.isNotEmpty())
@@ -108,6 +111,21 @@ class MainViewModel @Inject constructor(
                     }
                 )
         }
+    }
+
+    fun loadNextSearchedGifsPage(
+        value: String
+    ) {
+        if (!isNewCardsRequested)
+            viewModelScope.launch {
+                isNewCardsRequested = true
+                getNewSearchedGifs(
+                    value = value,
+                    onLoadSuccess = {
+                        isNewCardsRequested = false
+                    }
+                )
+            }
     }
 
     fun switchAppTheme() {
@@ -143,7 +161,37 @@ class MainViewModel @Inject constructor(
         onLoadSuccess: () -> Unit = {},
         onLoadFailure: () -> Unit = {}
     ) = withContext(Dispatchers.IO) {
-        repository.getSomeNewGiffs(offset = if (currentPage < 25) 0 else currentPage + 1)
+        repository.getSomeNewGiffs(offset = if (currentPage < 25) 0 else currentPage)
+            .enqueue(object : Callback<GiffsData> {
+                override fun onResponse(call: Call<GiffsData>, response: Response<GiffsData>) {
+                    _gifData.value = _gifData.value?.copy(
+                        data = buildList {
+                            addAll(_gifData.value!!.data)
+                            addAll(response.body()!!.data)
+                        }
+                    )
+                    currentPage += 25
+                    onLoadSuccess()
+                }
+
+                override fun onFailure(call: Call<GiffsData>, t: Throwable) {
+                    onLoadFailure()
+                    Log.e("FAILURE GET", t.message.toString())
+                }
+
+            })
+    }
+
+    private suspend fun getNewSearchedGifs(
+        value: String,
+        onLoadSuccess: () -> Unit = {},
+        onLoadFailure: () -> Unit = {}
+    ) = withContext(Dispatchers.IO) {
+        Log.e("SearchNEW", "Search new gifs with offset $currentPage")
+        repository.getGiffsByName(
+            value = value,
+            offset = if (currentPage < 25) 0 else currentPage
+        )
             .enqueue(object : Callback<GiffsData> {
                 override fun onResponse(call: Call<GiffsData>, response: Response<GiffsData>) {
                     _gifData.value = _gifData.value?.copy(
@@ -187,13 +235,17 @@ class MainViewModel @Inject constructor(
         onLoadSuccess: () -> Unit = {},
         onLoadFailure: () -> Unit = {}
     ) = withContext(Dispatchers.IO) {
+        Log.e("SearchFirst", "FIRST search start. currentPage = $currentPage")
         repository.getGiffsByName(
             value = value,
-            offset = if (currentPage < 25) 0 else currentPage + 1
+            offset = 0
         ).enqueue(object : Callback<GiffsData> {
             override fun onResponse(call: Call<GiffsData>, response: Response<GiffsData>) {
+
                 _gifData.value = response.body()
+                currentPage += 25
                 onLoadSuccess()
+                Log.e("SearchFirst", "FIRST search end. currentPage = $currentPage")
             }
 
             override fun onFailure(call: Call<GiffsData>, t: Throwable) {
