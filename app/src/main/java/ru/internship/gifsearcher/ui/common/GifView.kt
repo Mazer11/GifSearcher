@@ -19,6 +19,7 @@ import coil.compose.rememberAsyncImagePainter
 import coil.decode.GifDecoder
 import coil.decode.ImageDecoderDecoder
 import coil.request.ImageRequest
+import ru.internship.gifsearcher.R
 import ru.internship.gifsearcher.data.dataclasses.GifData
 
 @Composable
@@ -42,7 +43,9 @@ fun GifView(
     val painter = rememberAsyncImagePainter(
         model = ImageRequest.Builder(context)
             .data(data.image.original.url)
-            .crossfade(true).build(),
+            .error(R.drawable.image_error)
+            .crossfade(true).build()
+        ,
         imageLoader = imageLoader,
         contentScale = contentScale ?: ContentScale.Fit
     )

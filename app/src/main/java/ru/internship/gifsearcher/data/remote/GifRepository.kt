@@ -8,10 +8,14 @@ class GifRepository(
     private val api: GifApi
 ) {
 
-    fun getSomeNewGiffs(limit: Int = 48): Call<GiffsData> {
+    fun getSomeNewGiffs(
+        limit: Int = 25,
+        offset: Int = 0
+    ): Call<GiffsData> {
         return api.getSomeNewGiffs(
             api_key = Constants.api_key,
-            limit = limit
+            limit = limit,
+            offset = offset
         )
     }
 

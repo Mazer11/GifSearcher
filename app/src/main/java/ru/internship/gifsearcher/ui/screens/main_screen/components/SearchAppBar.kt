@@ -51,6 +51,7 @@ fun SearchAppBar(
                 ) {
                     IconButton(onClick = {
                         onClearClick()
+                        onSearch()
                         checkText = ""
                         focusManager.clearFocus()
                     }) {
