@@ -5,7 +5,7 @@ import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
 data class GiffsData(
-    @Json(name = "data") val data: List<GifData>,
+    @Json(name = "data") var data: List<GifData>,
 )
 
 /**Data of single Gif*/

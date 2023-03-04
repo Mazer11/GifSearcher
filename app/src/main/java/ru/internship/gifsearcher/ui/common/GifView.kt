@@ -28,6 +28,7 @@ fun GifView(
     contentScale: ContentScale? = null,
     clickEnabled: Boolean,
     modifier: Modifier,
+    onLoadSuccess: () -> Unit = {},
     onClick: () -> Unit = {}
 ) {
     val context = LocalContext.current
@@ -44,9 +45,11 @@ fun GifView(
         model = ImageRequest.Builder(context)
             .data(data.image.original.url)
             .error(R.drawable.image_error)
-            .crossfade(true).build()
-        ,
+            .crossfade(true).build(),
         imageLoader = imageLoader,
+        onSuccess = {
+            onLoadSuccess()
+        },
         contentScale = contentScale ?: ContentScale.Fit
     )
 

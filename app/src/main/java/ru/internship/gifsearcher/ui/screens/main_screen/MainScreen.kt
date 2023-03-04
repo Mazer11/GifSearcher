@@ -3,7 +3,7 @@ package ru.internship.gifsearcher.ui.screens.main_screen
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.livedata.observeAsState
@@ -105,7 +105,6 @@ fun MainScreen(
                             modifier = Modifier.fillMaxWidth()
                         )
 
-
                         LazyVerticalGrid(
                             modifier = Modifier
                                 .fillMaxSize()
@@ -113,12 +112,17 @@ fun MainScreen(
                             horizontalArrangement = Arrangement.SpaceAround,
                             columns = GridCells.Adaptive(gifSize)
                         ) {
-                            items(giffsData.value?.data!!) { data ->
+                            itemsIndexed(giffsData.value?.data!!) { index, data ->
                                 GifView(
                                     data = data,
                                     contentScale = ContentScale.Crop,
                                     clickEnabled = true,
-                                    modifier = Modifier
+                                    modifier = Modifier,
+                                    onLoadSuccess = {
+                                        if (index == vm.currentPage.minus(1)) {
+                                            vm.loadNextGifsPage()
+                                        }
+                                    }
                                 ) {
                                     val parcelData = GifParcelable(
                                         username = data.username,

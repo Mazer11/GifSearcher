@@ -51,15 +51,23 @@ class MainViewModel @Inject constructor(
     }
     val tagText: LiveData<String> = _tagText
 
+    var currentPage = 25
+
     init {
         _isLoadingState.value = true
         viewModelScope.launch {
-            getNewGiffs(
+            getTrendingGifs(
                 onLoadSuccess = { _isLoadingState.value = false },
                 onLoadFailure = {
                     _loadingFailed.value = true
                     _isLoadingState.value = false
                 })
+        }
+    }
+
+    fun loadNextGifsPage() {
+        viewModelScope.launch {
+            getNewTrendingGifs()
         }
     }
 
@@ -78,7 +86,7 @@ class MainViewModel @Inject constructor(
                     onLoadFailure = onLoadFailure
                 )
             else
-                getNewGiffs(
+                getTrendingGifs(
                     onLoadFailure = {
                         _isLoadingState.value = false
                     }
@@ -98,7 +106,7 @@ class MainViewModel @Inject constructor(
         _isLoadingState.value = true
         viewModelScope.launch {
             delay(500)
-            getNewGiffs(
+            getTrendingGifs(
                 onLoadSuccess = {
                     _isLoadingState.value = false
                     _loadingFailed.value = false
@@ -115,7 +123,32 @@ class MainViewModel @Inject constructor(
         return application.isDarkTheme
     }
 
-    private suspend fun getNewGiffs(
+    private suspend fun getNewTrendingGifs(
+        onLoadSuccess: () -> Unit = {},
+        onLoadFailure: () -> Unit = {}
+    ) = withContext(Dispatchers.IO) {
+        repository.getSomeNewGiffs(offset = if (currentPage < 25) 0 else currentPage + 1)
+            .enqueue(object : Callback<GiffsData> {
+                override fun onResponse(call: Call<GiffsData>, response: Response<GiffsData>) {
+                    _gifData.value = _gifData.value?.copy(
+                        data = buildList {
+                            addAll(_gifData.value!!.data)
+                            addAll(response.body()!!.data)
+                        }
+                    )
+                    currentPage += 25
+                    onLoadSuccess()
+                }
+
+                override fun onFailure(call: Call<GiffsData>, t: Throwable) {
+                    onLoadFailure()
+                    Log.e("FAILURE GET", t.message.toString())
+                }
+
+            })
+    }
+
+    private suspend fun getTrendingGifs(
         onLoadSuccess: () -> Unit = {},
         onLoadFailure: () -> Unit = {}
     ) = withContext(Dispatchers.IO) {
