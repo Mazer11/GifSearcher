@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import retrofit2.Call
@@ -40,6 +41,11 @@ class MainViewModel @Inject constructor(
     }
     val isDarkTheme: LiveData<Boolean> = _isDarkTheme
 
+    private val _loadingFailed: MutableLiveData<Boolean> by lazy {
+        MutableLiveData<Boolean>(false)
+    }
+    val loadingFailed: LiveData<Boolean> = _loadingFailed
+
     private val _tagText: MutableLiveData<String> by lazy {
         MutableLiveData<String>()
     }
@@ -48,7 +54,12 @@ class MainViewModel @Inject constructor(
     init {
         _isLoadingState.value = true
         viewModelScope.launch {
-            getNewGiffs(onLoadSuccess = { _isLoadingState.value = false })
+            getNewGiffs(
+                onLoadSuccess = { _isLoadingState.value = false },
+                onLoadFailure = {
+                    _loadingFailed.value = true
+                    _isLoadingState.value = false
+                })
         }
     }
 
@@ -67,7 +78,11 @@ class MainViewModel @Inject constructor(
                     onLoadFailure = onLoadFailure
                 )
             else
-                getNewGiffs()
+                getNewGiffs(
+                    onLoadFailure = {
+                        _isLoadingState.value = false
+                    }
+                )
         }
     }
 
@@ -79,7 +94,24 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    fun getAppTheme(): Boolean{
+    fun retryLoading() {
+        _isLoadingState.value = true
+        viewModelScope.launch {
+            delay(500)
+            getNewGiffs(
+                onLoadSuccess = {
+                    _isLoadingState.value = false
+                    _loadingFailed.value = false
+                },
+                onLoadFailure = {
+                    _loadingFailed.value = true
+                    _isLoadingState.value = false
+                }
+            )
+        }
+    }
+
+    fun getAppTheme(): Boolean {
         return application.isDarkTheme
     }
 
