@@ -19,11 +19,12 @@ class GifRepository(
         )
     }
 
-    fun getGiffsByName(value: String, limit: Int = 25): Call<GiffsData> {
+    fun getGiffsByName(value: String, limit: Int = 25, offset: Int = 0): Call<GiffsData> {
         return api.getGiffsByName(
             api_key = Constants.api_key,
             value = value,
-            limit = limit
+            limit = limit,
+            offset = offset
         )
     }
 

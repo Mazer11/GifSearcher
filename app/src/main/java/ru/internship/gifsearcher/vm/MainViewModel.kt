@@ -36,6 +36,11 @@ class MainViewModel @Inject constructor(
     }
     val isLoadingState: LiveData<Boolean> = _isLoadingState
 
+    private val _isPageLoading: MutableLiveData<Boolean> by lazy {
+        MutableLiveData<Boolean>(false)
+    }
+    val isPageLoading: LiveData<Boolean> = _isPageLoading
+
     private val _isDarkTheme: MutableLiveData<Boolean> by lazy {
         MutableLiveData<Boolean>()
     }
@@ -50,8 +55,8 @@ class MainViewModel @Inject constructor(
         MutableLiveData<String>()
     }
     val tagText: LiveData<String> = _tagText
-
     var currentPage = 25
+    private var isNewCardsRequested = false
 
     init {
         _isLoadingState.value = true
@@ -65,10 +70,20 @@ class MainViewModel @Inject constructor(
         }
     }
 
+    fun switchPageLoadingIndicator() {
+        _isPageLoading.value = _isPageLoading.value?.not()
+    }
+
     fun loadNextGifsPage() {
-        viewModelScope.launch {
-            getNewTrendingGifs()
-        }
+        if (!isNewCardsRequested)
+            viewModelScope.launch {
+                isNewCardsRequested = true
+                getNewTrendingGifs(
+                    onLoadSuccess = {
+                        isNewCardsRequested = false
+                    }
+                )
+            }
     }
 
     fun onSearch(
@@ -77,6 +92,7 @@ class MainViewModel @Inject constructor(
         onLoadFailure: () -> Unit = {}
     ) {
         _tagText.value = value
+        currentPage = 25
 
         viewModelScope.launch {
             if (value.isNotEmpty())
@@ -171,7 +187,10 @@ class MainViewModel @Inject constructor(
         onLoadSuccess: () -> Unit = {},
         onLoadFailure: () -> Unit = {}
     ) = withContext(Dispatchers.IO) {
-        repository.getGiffsByName(value = value).enqueue(object : Callback<GiffsData> {
+        repository.getGiffsByName(
+            value = value,
+            offset = if (currentPage < 25) 0 else currentPage + 1
+        ).enqueue(object : Callback<GiffsData> {
             override fun onResponse(call: Call<GiffsData>, response: Response<GiffsData>) {
                 _gifData.value = response.body()
                 onLoadSuccess()

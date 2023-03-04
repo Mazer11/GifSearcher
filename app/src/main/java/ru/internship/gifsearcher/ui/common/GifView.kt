@@ -18,6 +18,7 @@ import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
 import coil.decode.GifDecoder
 import coil.decode.ImageDecoderDecoder
+import coil.request.CachePolicy
 import coil.request.ImageRequest
 import ru.internship.gifsearcher.R
 import ru.internship.gifsearcher.data.dataclasses.GifData
@@ -29,6 +30,7 @@ fun GifView(
     clickEnabled: Boolean,
     modifier: Modifier,
     onLoadSuccess: () -> Unit = {},
+    onLoading: () -> Unit = {},
     onClick: () -> Unit = {}
 ) {
     val context = LocalContext.current
@@ -40,7 +42,8 @@ fun GifView(
             } else {
                 add(GifDecoder.Factory())
             }
-        }.build()
+        }.diskCachePolicy(CachePolicy.DISABLED)
+        .build()
     val painter = rememberAsyncImagePainter(
         model = ImageRequest.Builder(context)
             .data(data.image.original.url)
@@ -49,6 +52,9 @@ fun GifView(
         imageLoader = imageLoader,
         onSuccess = {
             onLoadSuccess()
+        },
+        onLoading = {
+            onLoading()
         },
         contentScale = contentScale ?: ContentScale.Fit
     )

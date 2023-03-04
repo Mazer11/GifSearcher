@@ -2,6 +2,7 @@ package ru.internship.gifsearcher.ui.screens.main_screen
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.material3.*
@@ -37,6 +38,7 @@ fun MainScreen(
     val tagText = vm.tagText.observeAsState("")
     val isDarkTheme = vm.isDarkTheme.observeAsState()
     val isLoadingFailed = vm.loadingFailed.observeAsState()
+    val isPageLoading = vm.isPageLoading.observeAsState()
 
 
     Scaffold(
@@ -118,9 +120,15 @@ fun MainScreen(
                                     contentScale = ContentScale.Crop,
                                     clickEnabled = true,
                                     modifier = Modifier,
+                                    onLoading = {
+                                        if (index >= vm.currentPage.minus(3)) {
+                                            vm.switchPageLoadingIndicator()
+                                        }
+                                    },
                                     onLoadSuccess = {
-                                        if (index == vm.currentPage.minus(1)) {
+                                        if (index >= vm.currentPage.minus(3)) {
                                             vm.loadNextGifsPage()
+                                            vm.switchPageLoadingIndicator()
                                         }
                                     }
                                 ) {
@@ -141,6 +149,23 @@ fun MainScreen(
                                     navController.navigate(NavRoutes.DETAILS.route)
                                 }
                             }
+
+                            if (isPageLoading.value == true)
+                                item(
+                                    span = {
+                                        GridItemSpan(3)
+                                    }
+                                ) {
+                                    Row(
+                                        horizontalArrangement = Arrangement.Center,
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(8.dp)
+                                    ) {
+                                        Text(text = "Loading images...")
+                                    }
+                                }
+
                         }
                     }
                 }
