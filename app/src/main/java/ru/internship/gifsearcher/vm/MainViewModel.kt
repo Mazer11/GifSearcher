@@ -38,6 +38,19 @@ class MainViewModel @Inject constructor(
         }
     }
 
+    fun onSearch(
+        value: String,
+        onLoadSuccess: () -> Unit = {},
+        onLoadFailure: () -> Unit = {}
+    ) {
+        viewModelScope.launch {
+            searchGifs(
+                value = value,
+                onLoadSuccess = onLoadSuccess,
+                onLoadFailure = onLoadFailure)
+        }
+    }
+
     private suspend fun getNewGiffs(
         onLoadSuccess: () -> Unit = {},
         onLoadFailure: () -> Unit = {}
@@ -51,6 +64,25 @@ class MainViewModel @Inject constructor(
             override fun onFailure(call: Call<GiffsData>, t: Throwable) {
                 onLoadFailure()
                 Log.e("FAILURE GET", t.message.toString())
+            }
+
+        })
+    }
+
+    private suspend fun searchGifs(
+        value: String,
+        onLoadSuccess: () -> Unit = {},
+        onLoadFailure: () -> Unit = {}
+    ) = withContext(Dispatchers.IO) {
+        repository.getGiffsByName(value = value).enqueue(object : Callback<GiffsData> {
+            override fun onResponse(call: Call<GiffsData>, response: Response<GiffsData>) {
+                _gifData.value = response.body()
+                onLoadSuccess()
+            }
+
+            override fun onFailure(call: Call<GiffsData>, t: Throwable) {
+                Log.e("SearchGifs", "Failed to search gifs throws: ${t.message}")
+                onLoadFailure()
             }
 
         })

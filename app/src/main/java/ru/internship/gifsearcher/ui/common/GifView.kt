@@ -42,6 +42,7 @@ fun GifView(
         painter = rememberAsyncImagePainter(
             model = ImageRequest.Builder(context)
                 .data(data.image.original.url)
+//                .placeholder()
                 .crossfade(true).build(),
             imageLoader = imageLoader,
             contentScale = contentScale ?: ContentScale.Fit

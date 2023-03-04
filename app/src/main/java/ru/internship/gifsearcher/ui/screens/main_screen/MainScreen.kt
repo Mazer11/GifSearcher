@@ -42,7 +42,7 @@ fun MainScreen(
                 onSearchTextChanged = { searchText.value = it },
                 onClearClick = { searchText.value = "" },
                 onThemeSwitch = {},
-                onSearch = {}
+                onSearch = { vm.onSearch(searchText.value) }
             )
         }
     ) { paddingValues ->
