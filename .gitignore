@@ -105,3 +105,5 @@ hs_err_pid*
 
 ### AndroidStudio Patch ###
 !/gradle/wrapper/gradle-wrapper.jar
+/.idea/.gitignore
+/.idea/inspectionProfiles/Project_Default.xml
