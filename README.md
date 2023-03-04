@@ -1,2 +1,2 @@
 # GifSearcher
-VK Internship contest
+Internship contest
