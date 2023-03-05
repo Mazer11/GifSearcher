@@ -6,20 +6,24 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import ru.internship.gifsearcher.R
 import ru.internship.gifsearcher.data.dataclasses.GifData
 import ru.internship.gifsearcher.data.dataclasses.GifParcelable
 import ru.internship.gifsearcher.data.dataclasses.Image
 import ru.internship.gifsearcher.data.dataclasses.Original
 import ru.internship.gifsearcher.ui.common.GifView
 
+/**The second screen of contest. Displays one Gif and some info.*/
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DetailsScreen(
     navController: NavController
 ) {
+    /**Tapped Gif data.*/
     val passedData =
         navController.previousBackStackEntry?.savedStateHandle?.get<GifParcelable>(key = "gif")
     val gifData = GifData(
@@ -55,7 +59,6 @@ fun DetailsScreen(
                         .padding(horizontal = 8.dp, vertical = 26.dp)
                 )
 
-
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -71,14 +74,16 @@ fun DetailsScreen(
                     )
 
                     Text(
-                        text = "Created by ${gifData.username.ifEmpty { "Unknown" }}\n" +
-                                "${gifData.import_datetime}\n" +
-                                "Original sizes: ${gifData.image.original.width}" +
-                                "x${gifData.image.original.height}\n" +
-                                "Weight: ${
-                                    (gifData.image.original.size.toFloat() / 1024 / 1024)
-                                        .times(100).toInt().toFloat() / 100
-                                }Mb",
+                        text = stringResource(R.string.created_by) +
+                                gifData.username.ifEmpty { stringResource(R.string.unknown) } +
+                                "\n" + gifData.import_datetime + "\n" +
+                                stringResource(R.string.original_sizes) +
+                                gifData.image.original.width + " " + "x" +
+                                gifData.image.original.height + "\n" +
+                                stringResource(R.string.weight) +
+                                (gifData.image.original.size.toFloat() / 1024 / 1024)
+                                    .times(100).toInt().toFloat() / 100
+                                + stringResource(R.string.mb),
                         textAlign = TextAlign.Center,
                         style = MaterialTheme.typography.bodyMedium,
                         modifier = Modifier
@@ -92,42 +97,9 @@ fun DetailsScreen(
                     modifier = Modifier.padding(top = 16.dp)
                 ) {
                     Text(
-                        text = "Back",
+                        text = stringResource(R.string.back),
                     )
                 }
             }
         }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

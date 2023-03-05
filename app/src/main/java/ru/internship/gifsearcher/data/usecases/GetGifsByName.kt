@@ -14,5 +14,4 @@ class GetGifsByName(
             offset = offset
         )
     }
-
 }

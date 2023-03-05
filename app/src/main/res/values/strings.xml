@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">GifSearcher</string>
+    <string name="back">Back</string>
+    <string name="mb">Mb</string>
+    <string name="weight">Weight: </string>
+    <string name="original_sizes">Original sizes: </string>
+    <string name="created_by">Created by</string>
+    <string name="unknown">Unknown</string>
 </resources>

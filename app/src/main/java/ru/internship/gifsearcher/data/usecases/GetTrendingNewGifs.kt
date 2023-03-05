@@ -15,5 +15,4 @@ class GetTrendingNewGifs(
             offset = offset
         )
     }
-
 }
