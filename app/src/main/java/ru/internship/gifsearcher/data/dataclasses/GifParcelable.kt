@@ -13,8 +13,12 @@ class GifParcelable(
     val title: String,
     /**Gif source.*/
     val source: String,
+    /**Gif height.*/
     val height: String,
+    /**Gif size in bytes.*/
     val size: String,
+    /**Gif URL.*/
     val url: String,
+    /**Gif width.*/
     val width: String
 ) : Parcelable

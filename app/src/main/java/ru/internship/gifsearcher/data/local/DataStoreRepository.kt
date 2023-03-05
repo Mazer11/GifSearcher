@@ -13,6 +13,9 @@ import ru.internship.gifsearcher.data.common.Constants.DATASTORE_NAME
 import ru.internship.gifsearcher.data.common.Constants.THEME_PREFERENCE
 import java.io.IOException
 
+/**Repository for DataStore.
+ *
+ * Used to store theme mod (night/light) value.*/
 class DataStoreRepository(
     private val context: Context
 ) {
@@ -27,6 +30,7 @@ class DataStoreRepository(
         val theme_key = booleanPreferencesKey(THEME_PREFERENCE)
     }
 
+    /**Initializes and/or returns stored theme value.*/
     val getThemeValue: Flow<Boolean> = context.dataStore.data
         .catch { exception ->
             if (exception is IOException) {
@@ -41,6 +45,7 @@ class DataStoreRepository(
             theme
         }
 
+    /**Switches current app theme.*/
     suspend fun switchThemePreference() {
         context.dataStore.edit { pref ->
             if (pref[PreferenceKeys.theme_key] == null)

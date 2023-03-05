@@ -7,6 +7,11 @@ import ru.internship.gifsearcher.data.dataclasses.GifsData
 
 interface GifApi {
 
+    /**Get query that returns [GifsData] of 25 trending gifs.
+     * @param api_key GIPHY API Key.
+     * @param limit The maximum number of objects to return.
+     * @param offset Specifies the starting position of the results.
+     * */
     @GET("v1/gifs/trending")
     fun getTrendingGifs(
         @Query("api_key") api_key: String,
@@ -14,6 +19,12 @@ interface GifApi {
         @Query("offset") offset: Int
     ): Call<GifsData>
 
+    /**Get query that returns relevant to search value [GifsData].
+     * @param api_key GIPHY API Key.
+     * @param value Search query term or phrase.
+     * @param limit The maximum number of objects to return.
+     * @param offset Specifies the starting position of the results.
+     * */
     @GET("v1/gifs/search")
     fun getGifsByName(
         @Query("api_key") api_key: String,
