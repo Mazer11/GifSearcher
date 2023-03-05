@@ -14,9 +14,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import ru.internship.gifsearcher.R
 import ru.internship.gifsearcher.data.dataclasses.GifParcelable
 import ru.internship.gifsearcher.ui.common.GifView
 import ru.internship.gifsearcher.ui.common.LoadingScreen
@@ -24,7 +26,12 @@ import ru.internship.gifsearcher.ui.navigation.NavRoutes
 import ru.internship.gifsearcher.ui.screens.main_screen.components.SearchAppBar
 import ru.internship.gifsearcher.vm.MainViewModel
 
-
+/**First screen of contest. Displays searchbar to search Gifs by words.
+ *
+ * Icon button switches theme mod.
+ *
+ * And LazyGrid with gifs. Paginating new gifs when scrolls to the end.
+ * */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(
@@ -51,7 +58,6 @@ fun MainScreen(
 
     /**True if currently loading new page of gifs*/
     val isPageLoading = vm.isPageLoading.observeAsState()
-
 
     Scaffold(
         topBar = {
@@ -82,13 +88,13 @@ fun MainScreen(
                             .fillMaxWidth()
                             .align(Alignment.Center)
                     ) {
-                        Text(text = "Failed to load images. Please, try again.")
+                        Text(text = stringResource(R.string.failed_load))
                         Button(
                             onClick = {
                                 vm.retryLoading()
                             },
                         ) {
-                            Text(text = "Retry")
+                            Text(text = stringResource(R.string.retry))
                         }
                     }
                 }
@@ -104,7 +110,7 @@ fun MainScreen(
                             .padding(paddingValues)
                     ) {
                         Text(
-                            text = "There is nothing to show.",
+                            text = stringResource(R.string.nothing_show),
                             modifier = Modifier.align(Alignment.Center),
                             style = MaterialTheme.typography.titleLarge
                         )
@@ -117,7 +123,10 @@ fun MainScreen(
                             .padding(paddingValues)
                     ) {
                         Text(
-                            text = if (tagText.value.isEmpty()) "Trending" else "Results for ${tagText.value}",
+                            text = if (tagText.value.isEmpty())
+                                stringResource(R.string.trending)
+                            else
+                                stringResource(R.string.results_for) + tagText.value,
                             style = MaterialTheme.typography.titleMedium,
                             textAlign = TextAlign.Center,
                             modifier = Modifier.fillMaxWidth()
@@ -181,10 +190,9 @@ fun MainScreen(
                                             .fillMaxWidth()
                                             .padding(8.dp)
                                     ) {
-                                        Text(text = "Loading images...")
+                                        Text(text = stringResource(R.string.loading_img))
                                     }
                                 }
-
                         }
                     }
                 }

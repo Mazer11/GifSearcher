@@ -6,4 +6,11 @@
     <string name="original_sizes">Original sizes: </string>
     <string name="created_by">Created by</string>
     <string name="unknown">Unknown</string>
+    <string name="search_gif">Search gifs…</string>
+    <string name="failed_load">Failed to load images. Please, try again.</string>
+    <string name="retry">Retry</string>
+    <string name="nothing_show">There is nothing to show.</string>
+    <string name="trending">Trending</string>
+    <string name="results_for">\"Results for \"</string>
+    <string name="loading_img">Loading images…</string>
 </resources>

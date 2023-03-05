@@ -13,10 +13,19 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
+import ru.internship.gifsearcher.R
 
-/**[TopAppBar] with text field and icon button.*/
+/**[TopAppBar] with text field and icon button.
+ * @param searchText current input. Limited by 50 characters.
+ * @param isDarkTheme current theme mod.
+ * @param onSearchTextChanged works on search text change.
+ * @param onThemeSwitch handles theme button click.
+ * @param onClearClick works when user clicks on clear button on search bar.
+ * @param onSearch handles search event.
+ * */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchAppBar(
@@ -42,7 +51,7 @@ fun SearchAppBar(
                     checkText = it
                 }
             },
-            placeholder = { Text(text = "Search gifs...") },
+            placeholder = { Text(text = stringResource(R.string.search_gif)) },
             leadingIcon = {
                 Icon(imageVector = Icons.Default.Search, contentDescription = "")
             },

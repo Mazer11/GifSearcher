@@ -14,10 +14,8 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-
     @Inject
     lateinit var application: GifApp
-
     @Inject
     lateinit var datastore: DataStoreRepository
 
@@ -25,7 +23,6 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-
             val themeValue = datastore.getThemeValue.collectAsState(initial = true)
             application.setAppTheme(themeValue.value)
 
@@ -33,7 +30,6 @@ class MainActivity : ComponentActivity() {
                 darkTheme = application.isDarkTheme
             ) {
                 val navController = rememberAnimatedNavController()
-
                 NavigationGraph(navController = navController)
             }
         }
