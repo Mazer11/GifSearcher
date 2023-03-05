@@ -1,6 +1,20 @@
 # GifSearcher
 Internship contest
 
+Если верить комитам, то срок написания кода приложения (не считая время затраченное на данный README.md) представлен следующим интервалом:</br>
+03.03.23 4:09 PM GMT+3 - 05.03.23 4:24 AM GMT+3
+</br>
+Стек:</br>
+<ol>
+  <li>Kotlin</li>
+  <li>Coil - для асинхронной загрузки и отображения Gif. Glide с Compose не очень дружит.</li>
+  <li>Okhttp + Retrofit + Moshi(для JSON-ов) - запросы в сеть.</li>
+  <li>Coroutines</li>
+  <li>Jetpack Compose</li>
+  <li>Hilt - внедрял зависимости.</li>
+  <li>DataStore - для хранения установленной цветовой темы приложения.</li>
+  <li>Material 3 - некоторые composable функции.</li>
+</ol>
 Все скриншоты сделаны на смартфоне Huawei P40 Lite на базе Android SDK 29 без Google Services.
 Изображения сжимал в Paint (так было быстрее).
 </br>
