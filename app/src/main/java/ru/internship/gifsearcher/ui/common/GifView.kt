@@ -39,6 +39,7 @@ fun GifView(
     clickEnabled: Boolean,
     onLoadSuccess: () -> Unit = {},
     onLoading: () -> Unit = {},
+    onError: () -> Unit = {},
     onClick: () -> Unit = {}
 ) {
     val context = LocalContext.current
@@ -65,6 +66,9 @@ fun GifView(
         },
         onLoading = {
             onLoading()
+        },
+        onError = {
+            onError()
         },
         contentScale = contentScale
     )

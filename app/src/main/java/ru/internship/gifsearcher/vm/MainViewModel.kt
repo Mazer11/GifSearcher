@@ -239,4 +239,8 @@ class MainViewModel @Inject constructor(
     fun resetCurrentPage() {
         currentPage = 0
     }
+
+    fun LoadingFailed(){
+        _loadingFailed.value = true
+    }
 }

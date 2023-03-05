@@ -84,11 +84,15 @@ fun MainScreen(
 
                 Box(modifier = Modifier.fillMaxSize()) {
                     Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
                         modifier = Modifier
                             .fillMaxWidth()
                             .align(Alignment.Center)
                     ) {
-                        Text(text = stringResource(R.string.failed_load))
+                        Text(
+                            text = stringResource(R.string.failed_load),
+                            textAlign = TextAlign.Center
+                        )
                         Button(
                             onClick = {
                                 vm.retryLoading()
@@ -158,6 +162,9 @@ fun MainScreen(
                                                 vm.loadNextSearchedGifsPage(value = searchText.value)
                                             vm.switchPageLoadingIndicator()
                                         }
+                                    },
+                                    onError = {
+                                        vm.LoadingFailed()
                                     }
                                 ) {
                                     val parcelData = GifParcelable(
