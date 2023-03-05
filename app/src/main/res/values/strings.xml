@@ -11,6 +11,6 @@
     <string name="retry">Retry</string>
     <string name="nothing_show">There is nothing to show.</string>
     <string name="trending">Trending</string>
-    <string name="results_for">\"Results for \"</string>
+    <string name="results_for">Results for </string>
     <string name="loading_img">Loading images…</string>
 </resources>
