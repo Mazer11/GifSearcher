@@ -21,19 +21,29 @@ import coil.decode.ImageDecoderDecoder
 import coil.request.CachePolicy
 import coil.request.ImageRequest
 import ru.internship.gifsearcher.R
-import ru.internship.gifsearcher.data.dataclasses.GifData
 
+/**[Image] composable of Gif.
+ * @param data Gif url.
+ * @param contentScale Scaling of gif.
+ * @param clickEnabled Button is disabled if false.
+ * @param modifier Modifier instance.
+ * @param onLoadSuccess Lambda that works when Gif successfully painted.
+ * @param onLoading Lambda that works when Gif is loading.
+ * @param onClick Works when clicks on loaded Gif.
+ * */
 @Composable
 fun GifView(
-    data: GifData,
-    contentScale: ContentScale? = null,
+    data: String,
+    modifier: Modifier = Modifier,
+    contentScale: ContentScale = ContentScale.Fit,
     clickEnabled: Boolean,
-    modifier: Modifier,
     onLoadSuccess: () -> Unit = {},
     onLoading: () -> Unit = {},
     onClick: () -> Unit = {}
 ) {
     val context = LocalContext.current
+
+    /**Size of gif*/
     val gifSize = ((LocalConfiguration.current.screenWidthDp - 32) / 3).dp
     val imageLoader = ImageLoader.Builder(context)
         .components {
@@ -42,11 +52,11 @@ fun GifView(
             } else {
                 add(GifDecoder.Factory())
             }
-        }.diskCachePolicy(CachePolicy.DISABLED).memoryCachePolicy(CachePolicy.DISABLED)
-        .build()
+        }.diskCachePolicy(CachePolicy.DISABLED).memoryCachePolicy(CachePolicy.DISABLED).build()
+
     val painter = rememberAsyncImagePainter(
         model = ImageRequest.Builder(context)
-            .data(data.image.original.url)
+            .data(data)
             .error(R.drawable.image_error)
             .crossfade(true).build(),
         imageLoader = imageLoader,
@@ -56,12 +66,12 @@ fun GifView(
         onLoading = {
             onLoading()
         },
-        contentScale = contentScale ?: ContentScale.Fit
+        contentScale = contentScale
     )
 
     Image(
         painter = painter,
-        contentScale = contentScale ?: ContentScale.Fit,
+        contentScale = contentScale,
         contentDescription = "",
         modifier = modifier
             .size(gifSize)

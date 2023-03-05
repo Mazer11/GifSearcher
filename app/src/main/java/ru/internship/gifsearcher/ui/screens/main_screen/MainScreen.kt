@@ -132,7 +132,7 @@ fun MainScreen(
                         ) {
                             itemsIndexed(giffsData.value?.data!!) { index, data ->
                                 GifView(
-                                    data = data,
+                                    data = data.image.original.url,
                                     contentScale = ContentScale.Crop,
                                     clickEnabled = true,
                                     modifier = Modifier,

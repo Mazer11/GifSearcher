@@ -47,7 +47,7 @@ fun DetailsScreen(
                     .padding(start = 8.dp, end = 8.dp, top = 8.dp, bottom = 8.dp)
             ) {
                 GifView(
-                    data = gifData,
+                    data = gifData.image.original.url,
                     clickEnabled = false,
                     modifier = Modifier
                         .fillMaxWidth()

@@ -12,6 +12,7 @@ import ru.internship.gifsearcher.ui.screens.details_screen.DetailsScreen
 import ru.internship.gifsearcher.ui.screens.main_screen.MainScreen
 import ru.internship.gifsearcher.vm.MainViewModel
 
+/**Application navigation graph.*/
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun NavigationGraph(
@@ -26,6 +27,12 @@ fun NavigationGraph(
 
         composable(
             route = NavRoutes.MAIN.route,
+            enterTransition = {
+                fadeIn()
+            },
+            exitTransition = {
+                fadeOut()
+            }
         ) {
             val vm = hiltViewModel<MainViewModel>()
             MainScreen(vm = vm, navController = navController)
