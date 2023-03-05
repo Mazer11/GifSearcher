@@ -83,10 +83,6 @@ dependencies {
     //LiveData
     implementation 'androidx.compose.runtime:runtime-livedata'
 
-    //Glide
-//    implementation 'com.github.bumptech.glide:glide:4.15.0'
-//    kapt 'com.github.bumptech.glide:compiler:4.15.0'
-
     //Coil
     def coil_version = '2.2.2'
     implementation("io.coil-kt:coil:$coil_version")
