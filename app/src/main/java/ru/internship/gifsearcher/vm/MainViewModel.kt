@@ -26,42 +26,52 @@ class MainViewModel @Inject constructor(
     private val datastore: DataStoreRepository
 ) : ViewModel() {
 
+    /**Current Gifs list.*/
     private val _gifData: MutableLiveData<GifsData> by lazy {
         MutableLiveData<GifsData>()
     }
-    val gifdata: LiveData<GifsData> = _gifData
+    val gifData: LiveData<GifsData> = _gifData
 
+    /**Starts LoadingScreen on MainScreen if true]*/
     private val _isLoadingState: MutableLiveData<Boolean> by lazy {
         MutableLiveData<Boolean>()
     }
     val isLoadingState: LiveData<Boolean> = _isLoadingState
 
+    /**True if currently loading new page*/
     private val _isPageLoading: MutableLiveData<Boolean> by lazy {
         MutableLiveData<Boolean>(false)
     }
     val isPageLoading: LiveData<Boolean> = _isPageLoading
 
+    /**Theme mode.*/
     private val _isDarkTheme: MutableLiveData<Boolean> by lazy {
         MutableLiveData<Boolean>()
     }
     val isDarkTheme: LiveData<Boolean> = _isDarkTheme
 
+    /**True if cannot load data from server.*/
     private val _loadingFailed: MutableLiveData<Boolean> by lazy {
         MutableLiveData<Boolean>(false)
     }
     val loadingFailed: LiveData<Boolean> = _loadingFailed
 
+    /**Current query value. Shows "Trending" if search query not specified.*/
     private val _tagText: MutableLiveData<String> by lazy {
         MutableLiveData<String>()
     }
     val tagText: LiveData<String> = _tagText
-    var currentPage = 25
+
+    /**Current page for pagination.*/
+    var currentPage = 0
+
+    /**True if new page is loading. Prevents wrong page loading.*/
     private var isNewCardsRequested = false
 
     init {
         _isLoadingState.value = true
         viewModelScope.launch {
-            getTrendingGifs(
+            getNewTrendingGifs(
                 onLoadSuccess = { _isLoadingState.value = false },
                 onLoadFailure = {
                     _loadingFailed.value = true
@@ -70,10 +80,12 @@ class MainViewModel @Inject constructor(
         }
     }
 
+    /**Switches loading indicator of main screen (bottom) on or off.*/
     fun switchPageLoadingIndicator() {
         _isPageLoading.value = _isPageLoading.value?.not()
     }
 
+    /**Loads new page of trending Gifs.*/
     fun loadNextTrendingGifsPage() {
         if (!isNewCardsRequested)
             viewModelScope.launch {
@@ -86,6 +98,7 @@ class MainViewModel @Inject constructor(
             }
     }
 
+    /**Search event handler.*/
     fun onSearch(
         value: String,
         onLoadSuccess: () -> Unit = {},
@@ -99,13 +112,13 @@ class MainViewModel @Inject constructor(
 
         viewModelScope.launch {
             if (value.isNotEmpty())
-                searchGifs(
+                getNewSearchedGifs(
                     value = value,
                     onLoadSuccess = onLoadSuccess,
                     onLoadFailure = onLoadFailure
                 )
             else
-                getTrendingGifs(
+                getNewTrendingGifs(
                     onLoadFailure = {
                         _isLoadingState.value = false
                     }
@@ -113,6 +126,7 @@ class MainViewModel @Inject constructor(
         }
     }
 
+    /**Loads additional pages for search request.*/
     fun loadNextSearchedGifsPage(
         value: String
     ) {
@@ -128,6 +142,7 @@ class MainViewModel @Inject constructor(
             }
     }
 
+    /**Switches application theme mod.*/
     fun switchAppTheme() {
         application.switchAppTheme()
         _isDarkTheme.value = application.isDarkTheme
@@ -136,11 +151,12 @@ class MainViewModel @Inject constructor(
         }
     }
 
+    /**Works when user clicks on retry button. It shows when failed to connect with server.*/
     fun retryLoading() {
         _isLoadingState.value = true
         viewModelScope.launch {
             delay(500)
-            getTrendingGifs(
+            getNewTrendingGifs(
                 onLoadSuccess = {
                     _isLoadingState.value = false
                     _loadingFailed.value = false
@@ -153,24 +169,29 @@ class MainViewModel @Inject constructor(
         }
     }
 
+    /**Returns current app theme mod.*/
     fun getAppTheme(): Boolean {
         return application.isDarkTheme
     }
 
+    /**Sends get request for new page with popular gifs.*/
     private suspend fun getNewTrendingGifs(
         onLoadSuccess: () -> Unit = {},
         onLoadFailure: () -> Unit = {}
     ) = withContext(Dispatchers.IO) {
-        remoteUseCases.getTrendingNewGifs.invoke(offset = if (currentPage < 25) 0 else currentPage)
+        remoteUseCases.getTrendingNewGifs.invoke(offset = if (currentPage < 24) 0 else currentPage)
             .enqueue(object : Callback<GifsData> {
                 override fun onResponse(call: Call<GifsData>, response: Response<GifsData>) {
-                    _gifData.value = _gifData.value?.copy(
-                        data = buildList {
-                            addAll(_gifData.value!!.data)
-                            addAll(response.body()!!.data)
-                        }
-                    )
-                    currentPage += 25
+                    if (currentPage == 0)
+                        _gifData.value = response.body()
+                    else
+                        _gifData.value = _gifData.value?.copy(
+                            data = buildList {
+                                addAll(_gifData.value!!.data)
+                                addAll(response.body()!!.data)
+                            }
+                        )
+                    currentPage += 24
                     onLoadSuccess()
                 }
 
@@ -182,24 +203,27 @@ class MainViewModel @Inject constructor(
             })
     }
 
+    /**Sends get request for new page of search query.*/
     private suspend fun getNewSearchedGifs(
         value: String,
         onLoadSuccess: () -> Unit = {},
         onLoadFailure: () -> Unit = {}
     ) = withContext(Dispatchers.IO) {
-        Log.e("SearchNEW", "Search new gifs with offset $currentPage")
         remoteUseCases.getGifsByName.invoke(
             value = value,
-            offset = if (currentPage < 25) 0 else currentPage
+            offset = if (currentPage < 24) 0 else currentPage
         ).enqueue(object : Callback<GifsData> {
             override fun onResponse(call: Call<GifsData>, response: Response<GifsData>) {
-                _gifData.value = _gifData.value?.copy(
-                    data = buildList {
-                        addAll(_gifData.value!!.data)
-                        addAll(response.body()!!.data)
-                    }
-                )
-                currentPage += 25
+                if (currentPage == 0)
+                    _gifData.value = response.body()
+                else
+                    _gifData.value = _gifData.value?.copy(
+                        data = buildList {
+                            addAll(_gifData.value!!.data)
+                            addAll(response.body()!!.data)
+                        }
+                    )
+                currentPage += 24
                 onLoadSuccess()
             }
 
@@ -211,52 +235,8 @@ class MainViewModel @Inject constructor(
         })
     }
 
-    private suspend fun getTrendingGifs(
-        onLoadSuccess: () -> Unit = {},
-        onLoadFailure: () -> Unit = {}
-    ) = withContext(Dispatchers.IO) {
-        remoteUseCases.getTrendingNewGifs.invoke().enqueue(object : Callback<GifsData> {
-            override fun onResponse(call: Call<GifsData>, response: Response<GifsData>) {
-                _gifData.value = response.body()
-                onLoadSuccess()
-            }
-
-            override fun onFailure(call: Call<GifsData>, t: Throwable) {
-                onLoadFailure()
-                Log.e("FAILURE GET", t.message.toString())
-            }
-
-        })
-    }
-
+    /**Sets page counter to 0.*/
     fun resetCurrentPage() {
         currentPage = 0
     }
-
-    private suspend fun searchGifs(
-        value: String,
-        onLoadSuccess: () -> Unit = {},
-        onLoadFailure: () -> Unit = {}
-    ) = withContext(Dispatchers.IO) {
-        Log.e("SearchFirst", "FIRST search start. currentPage = $currentPage")
-        remoteUseCases.getGifsByName.invoke(
-            value = value,
-            offset = 0
-        ).enqueue(object : Callback<GifsData> {
-            override fun onResponse(call: Call<GifsData>, response: Response<GifsData>) {
-
-                _gifData.value = response.body()
-                currentPage += 25
-                onLoadSuccess()
-                Log.e("SearchFirst", "FIRST search end. currentPage = $currentPage")
-            }
-
-            override fun onFailure(call: Call<GifsData>, t: Throwable) {
-                Log.e("SearchGifs", "Failed to search gifs throws: ${t.message}")
-                onLoadFailure()
-            }
-
-        })
-    }
-
 }

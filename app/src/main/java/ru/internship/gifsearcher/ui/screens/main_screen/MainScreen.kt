@@ -101,7 +101,7 @@ fun MainScreen(
 
             } else {
                 /**Current list of gifs.*/
-                val giffsData = vm.gifdata.observeAsState()
+                val giffsData = vm.gifData.observeAsState()
 
                 if (giffsData.value?.data.isNullOrEmpty())
                     Box(
@@ -174,6 +174,7 @@ fun MainScreen(
                                         key = "gif",
                                         value = parcelData
                                     )
+                                    vm.resetCurrentPage()
                                     navController.navigate(NavRoutes.DETAILS.route)
                                 }
                             }
