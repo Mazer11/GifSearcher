@@ -104,7 +104,9 @@ class MainViewModel @Inject constructor(
         onLoadSuccess: () -> Unit = {},
         onLoadFailure: () -> Unit = {}
     ) {
-        _tagText.value = value
+        if (_tagText.value == null)
+            _tagText.value = value
+        Log.e("BUGFIX", "_tagText = ${_tagText.value}")
         currentPage = 0
         _isPageLoading.value = false
         _loadingFailed.value = false
@@ -113,7 +115,7 @@ class MainViewModel @Inject constructor(
         viewModelScope.launch {
             if (value.isNotEmpty())
                 getNewSearchedGifs(
-                    value = value,
+                    value = _tagText.value!!,
                     onLoadSuccess = onLoadSuccess,
                     onLoadFailure = onLoadFailure
                 )
@@ -130,11 +132,13 @@ class MainViewModel @Inject constructor(
     fun loadNextSearchedGifsPage(
         value: String
     ) {
+        if (_tagText.value == null)
+            _tagText.value = value
         if (!isNewCardsRequested)
             viewModelScope.launch {
                 isNewCardsRequested = true
                 getNewSearchedGifs(
-                    value = value,
+                    value = _tagText.value!!,
                     onLoadSuccess = {
                         isNewCardsRequested = false
                     }
@@ -240,7 +244,7 @@ class MainViewModel @Inject constructor(
         currentPage = 0
     }
 
-    fun LoadingFailed(){
+    fun LoadingFailed() {
         _loadingFailed.value = true
     }
 }

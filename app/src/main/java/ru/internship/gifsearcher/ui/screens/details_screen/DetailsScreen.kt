@@ -125,7 +125,7 @@ fun DetailsScreen(
                     }
 
                     Button(
-                        onClick = { navController.navigateUp() },
+                        onClick = { navController.popBackStack() },
                         modifier = Modifier.padding(top = 16.dp)
                     ) {
                         Text(

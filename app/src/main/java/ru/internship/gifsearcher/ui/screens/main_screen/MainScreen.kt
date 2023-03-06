@@ -1,5 +1,6 @@
 package ru.internship.gifsearcher.ui.screens.main_screen
 
+import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
@@ -106,7 +107,7 @@ fun MainScreen(
             } else {
                 /**Current list of gifs.*/
                 val giffsData = vm.gifData.observeAsState()
-
+                Log.e("BUGFIX", "giffsData is ${giffsData.value?.data?.size}")
                 if (giffsData.value?.data.isNullOrEmpty())
                     Box(
                         modifier = Modifier
