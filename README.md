@@ -66,9 +66,3 @@
 ![photo_2_2023-03-05_05-17-17](https://user-images.githubusercontent.com/86118013/222938202-39f27ff0-3be7-4c7b-af74-329265639aed.jpg)
 </br>
 </br>
-Немного подробнее про мой опыт можно узнать из этого резюме:</br>
-Ссылка на первый проект из резюме: https://github.com/Mazer11/Recommendaily_client </br>
-Ссылка на второй проект из резюме: https://github.com/Mazer11/RestorauntRecords_compose </br></br>
-![Mazurak_Sergey_CV](https://user-images.githubusercontent.com/86118013/222939578-f0b1a057-ddc2-492c-b21f-6fd235a3155b.jpg)
-
-
